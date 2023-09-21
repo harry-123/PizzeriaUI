@@ -1,17 +1,15 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { MessageService } from 'primeng/api';
+import { Order } from 'src/models/order';
 import { OrderItem } from 'src/models/orderItem';
+import { OrderService } from 'src/services/order.service';
 import { PizzaService } from 'src/services/pizza.service';
 
 @Component({
   selector: 'app-cart',
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss'],
+  providers: [MessageService],
 })
 export class CartComponent implements OnChanges {
   header = 'YOUR CART IS EMPTY';
@@ -21,7 +19,8 @@ export class CartComponent implements OnChanges {
 
   constructor(
     public pizzaService: PizzaService,
-    private ref: ChangeDetectorRef
+    private orderService: OrderService,
+    private messageService: MessageService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -34,17 +33,44 @@ export class CartComponent implements OnChanges {
     }
     this.total = 0;
     this.cartItems.forEach((x) => {
-      this.total += x.itemValue;
+      this.total += x.netPrice;
     });
   }
 
   deleteCartItem(item: OrderItem) {
     const index = this.cartItems.findIndex(
-      (x) => x.id === item.id && x.size === item.size
+      (x) => x.itemId === item.itemId && x.size === item.size
     );
     this.cartItems.splice(index, 1);
     this.cartItems = [...this.cartItems];
     this.pizzaService.orderItems = this.cartItems;
     this.pizzaService.cartUpdated.emit(this.cartItems);
+  }
+
+  placeOrder() {
+    const order: Order = {
+      deliveryAddress: 'B 410, Aditya Windsor, Whitefields, Kondapur, 50084',
+      orderValue: this.total,
+      orderItems: this.cartItems,
+    };
+    this.orderService.placeOrder(order).subscribe(
+      (result) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Order Placed Successfully',
+        });
+        this.cartItems = [];
+        this.pizzaService.orderItems = this.cartItems;
+        this.pizzaService.cartUpdated.emit(this.cartItems);
+      },
+      (error) => {
+        this.messageService.add({
+          severity: 'failure',
+          summary: 'Failure',
+          detail: 'Failed to place order',
+        });
+      }
+    );
   }
 }

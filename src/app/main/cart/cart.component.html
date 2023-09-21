@@ -17,7 +17,7 @@
         styleClass="p-button-rounded p-button-outlined"
         (onClick)="deleteCartItem(item)"
       ></p-button>
-      <h3 class="price-label">&#8377; {{ item.itemValue }}</h3>
+      <h3 class="price-label">&#8377; {{ item.netPrice }}</h3>
     </div>
   </div>
   <ng-template pTemplate="footer">
@@ -27,7 +27,9 @@
         label="Checkout"
         icon="pi pi-shopping-cart"
         styleClass="p-button-secondary"
+        (onClick)="placeOrder()"
       ></p-button>
     </div>
   </ng-template>
+  <p-toast></p-toast>
 </p-card>

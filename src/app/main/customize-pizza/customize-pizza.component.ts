@@ -71,11 +71,11 @@ export class CustomizePizzaComponent implements OnInit {
   addToCart() {
     const selectedPizza: OrderItem = {
       name: this.selectedPizza.name,
-      id: this.selectedPizza.id,
+      itemId: this.selectedPizza.id,
       thumbnailPath: this.selectedPizza.thumbnailPath,
       size: this.pizzaSize.size,
       quantity: 1,
-      itemValue: this.totalPrice,
+      netPrice: this.totalPrice,
       ingredients: this.getIngredigentList(),
     };
     this.pizzaService.orderItems.push(selectedPizza);
@@ -85,12 +85,21 @@ export class CustomizePizzaComponent implements OnInit {
 
   getIngredigentList(): Ingredient[] {
     const list: Ingredient[] = [];
-    list.push({ name: this.selectedSauce.name, type: 'Sauce' });
-    list.push({ name: this.selectedCheese.name, type: 'Cheese' });
+    list.push({
+      name: this.selectedSauce.name,
+      type: 'Sauce',
+      ingredientId: this.selectedSauce.id,
+    });
+    list.push({
+      name: this.selectedCheese.name,
+      type: 'Cheese',
+      ingredientId: this.selectedCheese.id,
+    });
     this.selectedToppings.forEach((t: any) => {
       list.push({
         name: t.name,
         type: 'Topping',
+        ingredientId: t.id,
       });
     });
     return list;

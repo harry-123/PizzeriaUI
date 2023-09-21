@@ -21,6 +21,7 @@ import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { CheckboxModule } from 'primeng/checkbox';
 import { StepsModule } from 'primeng/steps';
+import { ToastModule } from 'primeng/toast';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import { StepsModule } from 'primeng/steps';
     RadioButtonModule,
     CheckboxModule,
     StepsModule,
+    ToastModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
