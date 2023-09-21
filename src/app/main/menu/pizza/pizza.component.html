@@ -1,0 +1,50 @@
+<p-card
+  [header]="pizza.name"
+  [subheader]="pizza.description"
+  [style]="{ width: '360px' }"
+>
+  <ng-template pTemplate="header">
+    <img
+      alt="Card"
+      src="../../../../assets/{{ pizza.thumbnailPath }}"
+      style="height: 200px"
+    />
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <div class="flex wrap align-items-center space-between gap">
+      <p-dropdown
+        [options]="pizza?.prices"
+        optionLabel="size"
+        [(ngModel)]="selectedSize"
+        placeholder="Select a Size"
+        (onChange)="sizeChangeHandler()"
+      >
+        <ng-template let-pizza pTemplate="item">
+          <div class="flex align-items-center space-between gap-2">
+            <div>{{ pizza.size }}</div>
+            <div class="price-label">&#8377; {{ pizza.price }}</div>
+          </div>
+        </ng-template>
+      </p-dropdown>
+      <h3 class="price-label-card">&#8377; {{ this.selectedSize.price }}</h3>
+      <p-button
+        *ngIf="selectedQuantity == 0"
+        label="Add to Cart"
+        icon="pi pi-shopping-cart"
+        styleClass="p-button-outlined"
+        (onClick)="addToCart()"
+      ></p-button>
+      <app-pizza-counter
+        *ngIf="selectedQuantity > 0"
+        [(counter)]="selectedQuantity"
+        (counterChange)="updateCartItems()"
+      ></app-pizza-counter>
+      <p-button
+        label="Customize"
+        icon="pi pi-check-square"
+        styleClass="p-button-outlined"
+        (onClick)="openCustomizeDialog()"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-card>

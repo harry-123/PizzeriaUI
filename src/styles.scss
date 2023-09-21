@@ -8,6 +8,39 @@
 
 body {
   background-color: #f8e7df;
-  font-family: "Raleway", sans-serif;
+  font-family: Inter, sans-serif;
   margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.p-card-title {
+  font-family: Raleway, Inter, sans-serif;
+}
+
+.btn {
+  cursor: pointer;
+}
+
+.p-card .p-card-content {
+  padding: 0 !important;
+}
+
+.field-checkbox {
+  margin: 16px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.p-steps .p-steps-item .p-menuitem-link:not(.p-disabled):focus {
+  box-shadow: none !important;
+}
+
+.p-dialog-header {
+  color: #212225 !important;
 }

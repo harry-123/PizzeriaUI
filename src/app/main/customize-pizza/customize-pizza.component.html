@@ -1,0 +1,75 @@
+<div class="container">
+  <p>
+    Customize your pizza to your liking, choose your sauce, topping and Toppings
+  </p>
+  <p-steps
+    [model]="steps"
+    [readonly]="false"
+    [(activeIndex)]="activeIndex"
+    [readonly]="false"
+  ></p-steps>
+
+  <div class="items">
+    <div *ngIf="activeIndex == 0">
+      <div *ngFor="let sauce of sauces" class="field-checkbox">
+        <label class="ingredient-label" [for]="sauce.id">
+          <span>{{ sauce.name }}</span>
+          <span>&#8377; {{ sauce.price }}</span>
+        </label>
+        <p-radioButton
+          [inputId]="sauce.id"
+          name="sauce"
+          [value]="sauce"
+          [(ngModel)]="selectedSauce"
+          (ngModelChange)="ingredientsUpdateHandler()"
+        ></p-radioButton>
+      </div>
+    </div>
+    <div *ngIf="activeIndex == 1">
+      <div *ngFor="let cheese of cheeses" class="field-checkbox">
+        <label class="ingredient-label" [for]="cheese.id">
+          <span>{{ cheese.name }}</span>
+          <span>&#8377; {{ cheese.price }}</span>
+        </label>
+        <p-radioButton
+          [inputId]="cheese.id"
+          name="cheese"
+          [value]="cheese"
+          [(ngModel)]="selectedCheese"
+          (ngModelChange)="ingredientsUpdateHandler()"
+        ></p-radioButton>
+      </div>
+    </div>
+    <div *ngIf="activeIndex == 2">
+      <div *ngFor="let topping of toppings" class="field-checkbox">
+        <label class="ingredient-label" [for]="topping.id">
+          <span>{{ topping.name }}</span>
+          <span>&#8377; {{ topping.price }}</span>
+        </label>
+        <p-checkbox
+          name="group"
+          [value]="topping"
+          [inputId]="topping.id"
+          (onChange)="ingredientsUpdateHandler()"
+          [(ngModel)]="selectedToppings"
+        ></p-checkbox>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="col">
+      <span class="pizza-name">{{ selectedPizza.name }}</span>
+      <span class="size">{{ pizzaSize.size }}</span>
+    </div>
+    <div class="price">&#8377; {{ totalPrice }}</div>
+    <div>
+      <p-button
+        label="Add to Cart"
+        icon="pi pi-shopping-cart"
+        styleClass="p-button-outlined"
+        (onClick)="addToCart()"
+      ></p-button>
+    </div>
+  </div>
+</div>

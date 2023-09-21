@@ -1,0 +1,33 @@
+<p-card class="cart" [header]="header" [subheader]="subheader">
+  <div *ngFor="let item of cartItems" class="cart-item">
+    <img
+      src="../../../assets/{{ item.thumbnailPath }}"
+      alt="item-image"
+      class="item-image"
+    />
+    <div class="info-container">
+      <div class="name">{{ item.name }}</div>
+      <div class="size">{{ item.size }}</div>
+      <div class="size">Quantity: {{ item.quantity }}</div>
+      <div *ngIf="item.ingredients.length > 0" class="size">Customized</div>
+    </div>
+    <div class="price-info">
+      <p-button
+        icon="pi pi-trash"
+        styleClass="p-button-rounded p-button-outlined"
+        (onClick)="deleteCartItem(item)"
+      ></p-button>
+      <h3 class="price-label">&#8377; {{ item.itemValue }}</h3>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <div *ngIf="cartItems.length > 0" class="footer">
+      <h2 class="price-label">Your Total: &#8377;{{ total }}</h2>
+      <p-button
+        label="Checkout"
+        icon="pi pi-shopping-cart"
+        styleClass="p-button-secondary"
+      ></p-button>
+    </div>
+  </ng-template>
+</p-card>

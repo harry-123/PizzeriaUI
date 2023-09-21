@@ -1,0 +1,48 @@
+.cart-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px 0;
+}
+
+.item-image {
+  width: 30%;
+  height: 120px;
+  border-radius: 3px;
+  object-fit: cover;
+  object-position: center center;
+}
+
+.price-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-left: auto;
+  flex-basis: 72px;
+}
+
+.price-label {
+  font-family: Inter, sans-serif;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.name {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.size {
+  font-size: 14px;
+}
+
+.info-container {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
