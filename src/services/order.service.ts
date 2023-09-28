@@ -9,6 +9,8 @@ import { Order } from 'src/models/order';
 })
 export class OrderService {
   serverUrl = environment.serverUrl;
+  uniqueItemId = 0;
+
   constructor(private httpClient: HttpClient) {}
 
   placeOrder(order: Order): Observable<any> {

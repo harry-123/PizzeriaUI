@@ -1,6 +1,7 @@
 import { Ingredient } from './ingredient';
 
 export type OrderItem = {
+  id: number;
   name: string;
   itemId: number;
   thumbnailPath: string;

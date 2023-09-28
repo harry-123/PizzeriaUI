@@ -39,7 +39,7 @@ export class CartComponent implements OnChanges {
 
   deleteCartItem(item: OrderItem) {
     const index = this.cartItems.findIndex(
-      (x) => x.itemId === item.itemId && x.size === item.size
+      (x) => x.id === item.id
     );
     this.cartItems.splice(index, 1);
     this.cartItems = [...this.cartItems];

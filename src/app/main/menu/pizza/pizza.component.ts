@@ -3,6 +3,7 @@ import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { OrderItem } from 'src/models/orderItem';
 import { PizzaService } from 'src/services/pizza.service';
 import { CustomizePizzaComponent } from '../../customize-pizza/customize-pizza.component';
+import { OrderService } from 'src/services/order.service';
 
 @Component({
   selector: 'app-pizza',
@@ -18,7 +19,8 @@ export class PizzaComponent implements OnInit {
 
   constructor(
     private pizzaService: PizzaService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private orderService: OrderService
   ) {}
 
   ngOnInit(): void {
@@ -44,6 +46,7 @@ export class PizzaComponent implements OnInit {
   addToCart() {
     this.selectedQuantity++;
     const selectedPizza: OrderItem = {
+      id: this.orderService.uniqueItemId,
       name: this.pizza.name,
       itemId: this.pizza.id,
       thumbnailPath: this.pizza.thumbnailPath,
@@ -54,19 +57,20 @@ export class PizzaComponent implements OnInit {
     };
     this.pizzaService.orderItems.push(selectedPizza);
     this.pizzaService.orderItems = [...this.pizzaService.orderItems];
+    this.orderService.uniqueItemId++;
   }
 
   updateCartItems() {
     if (this.selectedQuantity === 0) {
       const index = this.pizzaService.orderItems.findIndex(
-        (i) => i.itemId === this.pizza.id
+        (i) => i.itemId === this.pizza.id && i.size === this.selectedSize.size && i.ingredients.length === 0
       );
       this.pizzaService.orderItems.splice(index, 1);
       this.pizzaService.orderItems = [...this.pizzaService.orderItems];
       return;
     }
     const cartItem = this.pizzaService.orderItems.find(
-      (i) => i.itemId === this.pizza.id
+      (i) => i.itemId === this.pizza.id && i.size === this.selectedSize.size && i.ingredients.length === 0
     );
     if (cartItem) {
       cartItem.quantity = this.selectedQuantity;

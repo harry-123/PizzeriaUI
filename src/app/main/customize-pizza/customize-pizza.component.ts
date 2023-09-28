@@ -3,6 +3,7 @@ import { MenuItem } from 'primeng/api';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { Ingredient } from 'src/models/ingredient';
 import { OrderItem } from 'src/models/orderItem';
+import { OrderService } from 'src/services/order.service';
 import { PizzaService } from 'src/services/pizza.service';
 
 @Component({
@@ -32,7 +33,8 @@ export class CustomizePizzaComponent implements OnInit {
   constructor(
     private pizzaService: PizzaService,
     private ref: DynamicDialogRef,
-    public config: DynamicDialogConfig
+    public config: DynamicDialogConfig,
+    private orderService: OrderService
   ) {
     this.pizzaSize = config.data.size;
     this.selectedPizza = config.data.pizza;
@@ -70,6 +72,7 @@ export class CustomizePizzaComponent implements OnInit {
 
   addToCart() {
     const selectedPizza: OrderItem = {
+      id: this.orderService.uniqueItemId,
       name: this.selectedPizza.name,
       itemId: this.selectedPizza.id,
       thumbnailPath: this.selectedPizza.thumbnailPath,
@@ -80,6 +83,7 @@ export class CustomizePizzaComponent implements OnInit {
     };
     this.pizzaService.orderItems.push(selectedPizza);
     this.pizzaService.orderItems = [...this.pizzaService.orderItems];
+    this.orderService.uniqueItemId++;
     this.ref.close();
   }
 
