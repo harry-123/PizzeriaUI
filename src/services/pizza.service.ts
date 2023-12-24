@@ -9,8 +9,6 @@ import { OrderItem } from 'src/models/orderItem';
 })
 export class PizzaService {
   serverUrl = environment.serverUrl;
-  orderItems: OrderItem[] = [];
-  cartUpdated = new EventEmitter<OrderItem[]>();
 
   constructor(private httpClient: HttpClient) {}
 

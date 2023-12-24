@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { MenuItem } from 'primeng/api';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { AppState } from 'src/app/store/app.state';
+import { addToCart } from 'src/app/store/cart.actions';
 import { Ingredient } from 'src/models/ingredient';
 import { OrderItem } from 'src/models/orderItem';
 import { OrderService } from 'src/services/order.service';
@@ -34,7 +37,8 @@ export class CustomizePizzaComponent implements OnInit {
     private pizzaService: PizzaService,
     private ref: DynamicDialogRef,
     public config: DynamicDialogConfig,
-    private orderService: OrderService
+    private orderService: OrderService,
+    private store: Store<AppState>
   ) {
     this.pizzaSize = config.data.size;
     this.selectedPizza = config.data.pizza;
@@ -81,8 +85,7 @@ export class CustomizePizzaComponent implements OnInit {
       netPrice: this.totalPrice,
       ingredients: this.getIngredigentList(),
     };
-    this.pizzaService.orderItems.push(selectedPizza);
-    this.pizzaService.orderItems = [...this.pizzaService.orderItems];
+    this.store.dispatch(addToCart(selectedPizza));
     this.orderService.uniqueItemId++;
     this.ref.close();
   }

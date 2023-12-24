@@ -1,5 +1,9 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { MessageService } from 'primeng/api';
+import { AppState } from 'src/app/store/app.state';
+import { clearCart, removeFromCart } from 'src/app/store/cart.actions';
+import { selectOrderItems } from 'src/app/store/cart.selectors';
 import { Order } from 'src/models/order';
 import { OrderItem } from 'src/models/orderItem';
 import { OrderService } from 'src/services/order.service';
@@ -11,19 +15,27 @@ import { PizzaService } from 'src/services/pizza.service';
   styleUrls: ['./cart.component.scss'],
   providers: [MessageService],
 })
-export class CartComponent implements OnChanges {
+export class CartComponent implements OnInit {
   header = 'YOUR CART IS EMPTY';
   subheader = 'Please add some items from the menu.';
-  @Input() cartItems: OrderItem[] = [];
+  cartItems: OrderItem[] = [];
   total = 0;
 
   constructor(
     public pizzaService: PizzaService,
     private orderService: OrderService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private store: Store<AppState>
   ) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnInit(): void {
+    this.store.select(selectOrderItems).subscribe((result) => {
+      this.cartItems = result;
+      this.updatePricingLabels();
+    });
+  }
+
+  updatePricingLabels(): void {
     if (this.cartItems.length === 0) {
       this.header = 'YOUR CART IS EMPTY';
       this.subheader = 'Please add some items from the menu.';
@@ -38,13 +50,7 @@ export class CartComponent implements OnChanges {
   }
 
   deleteCartItem(item: OrderItem) {
-    const index = this.cartItems.findIndex(
-      (x) => x.id === item.id
-    );
-    this.cartItems.splice(index, 1);
-    this.cartItems = [...this.cartItems];
-    this.pizzaService.orderItems = this.cartItems;
-    this.pizzaService.cartUpdated.emit(this.cartItems);
+    this.store.dispatch(removeFromCart(item));
   }
 
   placeOrder() {
@@ -60,9 +66,7 @@ export class CartComponent implements OnChanges {
           summary: 'Success',
           detail: 'Order Placed Successfully',
         });
-        this.cartItems = [];
-        this.pizzaService.orderItems = this.cartItems;
-        this.pizzaService.cartUpdated.emit(this.cartItems);
+        this.store.dispatch(clearCart());
       },
       (error) => {
         this.messageService.add({

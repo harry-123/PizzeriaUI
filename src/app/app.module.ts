@@ -22,6 +22,8 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { CheckboxModule } from 'primeng/checkbox';
 import { StepsModule } from 'primeng/steps';
 import { ToastModule } from 'primeng/toast';
+import { StoreModule } from '@ngrx/store';
+import { cartReducer } from './store/cart.reducers';
 
 @NgModule({
   declarations: [
@@ -49,6 +51,7 @@ import { ToastModule } from 'primeng/toast';
     CheckboxModule,
     StepsModule,
     ToastModule,
+    StoreModule.forRoot({orderItemsState: cartReducer})
   ],
   providers: [],
   bootstrap: [AppComponent],

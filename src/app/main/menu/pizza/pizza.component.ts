@@ -4,6 +4,14 @@ import { OrderItem } from 'src/models/orderItem';
 import { PizzaService } from 'src/services/pizza.service';
 import { CustomizePizzaComponent } from '../../customize-pizza/customize-pizza.component';
 import { OrderService } from 'src/services/order.service';
+import { Store } from '@ngrx/store';
+import {
+  addToCart,
+  removeFromCart,
+  updateCartItem,
+} from 'src/app/store/cart.actions';
+import { selectOrderItems } from 'src/app/store/cart.selectors';
+import { AppState } from 'src/app/store/app.state';
 
 @Component({
   selector: 'app-pizza',
@@ -16,11 +24,13 @@ export class PizzaComponent implements OnInit {
   selectedSize: any;
   selectedQuantity = 0;
   ref: DynamicDialogRef | undefined;
+  cartItems: OrderItem[] = [];
 
   constructor(
     private pizzaService: PizzaService,
     private dialogService: DialogService,
-    private orderService: OrderService
+    private orderService: OrderService,
+    private store: Store<AppState>
   ) {}
 
   ngOnInit(): void {
@@ -35,7 +45,8 @@ export class PizzaComponent implements OnInit {
   }
 
   listenToCartUpdates() {
-    this.pizzaService.cartUpdated.subscribe((orderItems) => {
+    this.store.select(selectOrderItems).subscribe((orderItems) => {
+      this.cartItems = orderItems;
       const cartItem = orderItems.find(
         (i) => i.itemId === this.pizza.id && i.size === this.selectedSize.size
       );
@@ -55,27 +66,34 @@ export class PizzaComponent implements OnInit {
       netPrice: this.selectedSize.price,
       ingredients: [],
     };
-    this.pizzaService.orderItems.push(selectedPizza);
-    this.pizzaService.orderItems = [...this.pizzaService.orderItems];
     this.orderService.uniqueItemId++;
+    this.store.dispatch(addToCart(selectedPizza));
   }
 
   updateCartItems() {
     if (this.selectedQuantity === 0) {
-      const index = this.pizzaService.orderItems.findIndex(
-        (i) => i.itemId === this.pizza.id && i.size === this.selectedSize.size && i.ingredients.length === 0
+      const item = this.cartItems.find(
+        (i) =>
+          i.itemId === this.pizza.id &&
+          i.size === this.selectedSize.size &&
+          i.ingredients.length === 0
       );
-      this.pizzaService.orderItems.splice(index, 1);
-      this.pizzaService.orderItems = [...this.pizzaService.orderItems];
+      if (item) this.store.dispatch(removeFromCart(item));
       return;
     }
-    const cartItem = this.pizzaService.orderItems.find(
-      (i) => i.itemId === this.pizza.id && i.size === this.selectedSize.size && i.ingredients.length === 0
+    const cartItem = this.cartItems.find(
+      (i) =>
+        i.itemId === this.pizza.id &&
+        i.size === this.selectedSize.size &&
+        i.ingredients.length === 0
     );
     if (cartItem) {
-      cartItem.quantity = this.selectedQuantity;
-      cartItem.netPrice = this.selectedSize.price * this.selectedQuantity;
-      this.pizzaService.orderItems = [...this.pizzaService.orderItems];
+      const updatedItem = {
+        ...cartItem,
+        quantity: this.selectedQuantity,
+        netPrice: this.selectedSize.price * this.selectedQuantity,
+      };
+      this.store.dispatch(updateCartItem(updatedItem));
     }
   }
 
