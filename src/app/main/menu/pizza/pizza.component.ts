@@ -1,16 +1,18 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { OrderItem } from 'src/models/orderItem';
-import { PizzaService } from 'src/services/pizza.service';
 import { CustomizePizzaComponent } from '../../customize-pizza/customize-pizza.component';
-import { OrderService } from 'src/services/order.service';
 import { Store } from '@ngrx/store';
 import {
   addToCart,
+  incrementUniqueItemId,
   removeFromCart,
   updateCartItem,
 } from 'src/app/store/cart.actions';
-import { selectOrderItems } from 'src/app/store/cart.selectors';
+import {
+  selectOrderItems,
+  selectUniqueItemId,
+} from 'src/app/store/cart.selectors';
 import { AppState } from 'src/app/store/app.state';
 
 @Component({
@@ -25,17 +27,17 @@ export class PizzaComponent implements OnInit {
   selectedQuantity = 0;
   ref: DynamicDialogRef | undefined;
   cartItems: OrderItem[] = [];
+  uniqueItemId: number = 0;
 
   constructor(
-    private pizzaService: PizzaService,
     private dialogService: DialogService,
-    private orderService: OrderService,
     private store: Store<AppState>
   ) {}
 
   ngOnInit(): void {
     this.setDefaultSizeToMedimum();
     this.listenToCartUpdates();
+    this.getUniqueItemId();
   }
 
   setDefaultSizeToMedimum() {
@@ -54,10 +56,16 @@ export class PizzaComponent implements OnInit {
     });
   }
 
+  getUniqueItemId() {
+    this.store.select(selectUniqueItemId).subscribe((itemId) => {
+      this.uniqueItemId = itemId;
+    });
+  }
+
   addToCart() {
     this.selectedQuantity++;
     const selectedPizza: OrderItem = {
-      id: this.orderService.uniqueItemId,
+      id: this.uniqueItemId,
       name: this.pizza.name,
       itemId: this.pizza.id,
       thumbnailPath: this.pizza.thumbnailPath,
@@ -66,8 +74,8 @@ export class PizzaComponent implements OnInit {
       netPrice: this.selectedSize.price,
       ingredients: [],
     };
-    this.orderService.uniqueItemId++;
     this.store.dispatch(addToCart(selectedPizza));
+    this.store.dispatch(incrementUniqueItemId());
   }
 
   updateCartItems() {

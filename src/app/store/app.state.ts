@@ -1,9 +1,10 @@
-import { OrderItem } from "src/models/orderItem";
+import { OrderItem } from 'src/models/orderItem';
 
 export interface AppState {
-    orderItemsState: OrderItemState
+  orderItemsState: OrderItemState;
 }
 
 export interface OrderItemState {
-    orderItems: OrderItem[]
+  orderItems: OrderItem[];
+  orderItemUniqueId: number;
 }

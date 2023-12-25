@@ -14,3 +14,7 @@ export const updateCartItem = createAction(
   '[Item] update Cart Item',
   props<OrderItem>()
 );
+
+export const incrementUniqueItemId = createAction(
+  '[Item] Incrment unique item id'
+);

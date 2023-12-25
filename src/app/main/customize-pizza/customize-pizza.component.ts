@@ -3,10 +3,10 @@ import { Store } from '@ngrx/store';
 import { MenuItem } from 'primeng/api';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { AppState } from 'src/app/store/app.state';
-import { addToCart } from 'src/app/store/cart.actions';
+import { addToCart, incrementUniqueItemId } from 'src/app/store/cart.actions';
+import { selectUniqueItemId } from 'src/app/store/cart.selectors';
 import { Ingredient } from 'src/models/ingredient';
 import { OrderItem } from 'src/models/orderItem';
-import { OrderService } from 'src/services/order.service';
 import { PizzaService } from 'src/services/pizza.service';
 
 @Component({
@@ -32,12 +32,12 @@ export class CustomizePizzaComponent implements OnInit {
   basePrice: number;
   totalPrice: number;
   selectedToppings = [];
+  uniqueItemId: number = 0;
 
   constructor(
     private pizzaService: PizzaService,
     private ref: DynamicDialogRef,
     public config: DynamicDialogConfig,
-    private orderService: OrderService,
     private store: Store<AppState>
   ) {
     this.pizzaSize = config.data.size;
@@ -48,6 +48,7 @@ export class CustomizePizzaComponent implements OnInit {
 
   ngOnInit(): void {
     this.getPizzaIngredients();
+    this.getUniqueItemId();
   }
 
   getPizzaIngredients() {
@@ -66,6 +67,12 @@ export class CustomizePizzaComponent implements OnInit {
     });
   }
 
+  getUniqueItemId() {
+    this.store.select(selectUniqueItemId).subscribe((itemId) => {
+      this.uniqueItemId = itemId;
+    });
+  }
+
   ingredientsUpdateHandler() {
     this.totalPrice =
       this.basePrice + this.selectedSauce.price + this.selectedCheese.price;
@@ -76,7 +83,7 @@ export class CustomizePizzaComponent implements OnInit {
 
   addToCart() {
     const selectedPizza: OrderItem = {
-      id: this.orderService.uniqueItemId,
+      id: this.uniqueItemId,
       name: this.selectedPizza.name,
       itemId: this.selectedPizza.id,
       thumbnailPath: this.selectedPizza.thumbnailPath,
@@ -86,7 +93,7 @@ export class CustomizePizzaComponent implements OnInit {
       ingredients: this.getIngredigentList(),
     };
     this.store.dispatch(addToCart(selectedPizza));
-    this.orderService.uniqueItemId++;
+    this.store.dispatch(incrementUniqueItemId());
     this.ref.close();
   }
 

@@ -3,6 +3,7 @@ import { OrderItem } from 'src/models/orderItem';
 import {
   addToCart,
   clearCart,
+  incrementUniqueItemId,
   removeFromCart,
   updateCartItem,
 } from './cart.actions';
@@ -10,6 +11,7 @@ import { AppState, OrderItemState } from './app.state';
 
 const initialState: OrderItemState = {
   orderItems: [],
+  orderItemUniqueId: 1,
 };
 
 export const cartReducer = createReducer(
@@ -36,6 +38,13 @@ export const cartReducer = createReducer(
       orderItems: state.orderItems.map((x) =>
         x.id === orderItem.id ? orderItem : x
       ),
+    };
+  }),
+
+  on(incrementUniqueItemId, (state: OrderItemState) => {
+    return {
+      ...state,
+      orderItemUniqueId: state.orderItemUniqueId + 1,
     };
   })
 );
